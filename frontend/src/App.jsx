@@ -1,50 +1,55 @@
 import {
-  BatteryFull,
+  ArrowRight,
+  BatteryCharging,
   Calendar,
   CheckCircle,
-  ChevronRight,
+  ChevronDown,
   Headphones,
   MapPin,
   MessageCircle,
+  Menu,
   Package,
   Phone,
   Shield,
+  ShieldCheck,
   Star,
+  Store,
+  Wrench,
   Zap,
 } from 'lucide-react';
-import BatteryModel from './BatteryModel';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import './index.css';
 
 const fadeInProps = {
   initial: { opacity: 0, y: 30 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-50px" },
-  transition: { duration: 0.7, ease: "easeOut" }
+  viewport: { once: true, margin: '-50px' },
+  transition: { duration: 0.7, ease: 'easeOut' },
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.15 }
-  }
+    transition: { staggerChildren: 0.15 },
+  },
 };
 
 const itemProps = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
 const phoneNumber = '9100000000';
-const displayPhone = '+91 00000000';
+const displayPhone = '+91 00000 00000';
 
 const createWhatsAppLink = (message) =>
   `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
 const trackClick = async (productName) => {
   try {
-    await fetch('http://localhost:5000/api/track-click', {
+    await fetch('/api/track-click', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -56,6 +61,20 @@ const trackClick = async (productName) => {
   }
 };
 
+const navItems = [
+  { label: 'Home', href: '#top', current: true },
+  { label: 'Batteries', href: '#brands', hasCaret: true },
+  { label: 'Reviews', href: '#reviews' },
+  { label: 'Contact', href: '#contact' },
+];
+
+const heroFeatures = [
+  { icon: Wrench, title: 'Maintenance', detail: 'Free' },
+  { icon: BatteryCharging, title: 'Sealed', detail: 'AGM' },
+  { icon: Zap, title: 'Long', detail: 'Life' },
+  { icon: ShieldCheck, title: 'Warranty', detail: 'Support' },
+];
+
 const brandCards = [
   {
     name: 'VK Power',
@@ -64,7 +83,7 @@ const brandCards = [
     headline: 'Sealed AGM battery for daily riders',
     description:
       'A clean maintenance-free option for bikes and scooters with dependable starting power and spill-proof confidence.',
-    image: '/vk_poster.png',
+    image: '/battery_2.jpeg',
     ctaMessage: 'Hi, I want details for VK Power battery.',
     features: [
       'Sealed AGM technology',
@@ -89,46 +108,37 @@ const brandCards = [
   },
 ];
 
-const quickStats = [
-  { value: '2', label: 'Trusted brands' },
-  { value: '12-19', label: 'Months warranty' },
-  { value: '100%', label: 'Two wheeler focus' },
-];
-
 const benefits = [
   {
     icon: Shield,
     title: '100% Maintenance Free',
-    description: 'Install it and forget it. No distilled water top-ups required ever.',
+    description:
+      'Install it and forget it. No distilled water top-ups required ever.',
   },
   {
     icon: Zap,
     title: 'Instant Start Power',
-    description: 'High cranking power guarantees quick starts even on cold winter mornings.',
+    description:
+      'High cranking power guarantees quick starts even on cold winter mornings.',
   },
   {
     icon: Calendar,
     title: 'Long-Lasting Warranty',
-    description: 'Up to 19 months of hassle-free replacement warranty for peace of mind.',
+    description:
+      'Up to 19 months of hassle-free replacement warranty for peace of mind.',
   },
   {
     icon: Headphones,
-    title: 'Quick Home Delivery',
-    description: 'Message us on WhatsApp to get fast delivery and installation support.',
+    title: 'Quick WhatsApp Support',
+    description:
+      'Message us to confirm stock, delivery support, and the right battery before you visit.',
   },
 ];
 
 const supportPoints = [
-  'Advanced spill-proof technology designed specifically for bumpy Indian roads.',
-  'Zero maintenance requirements save you money and time over the battery lifespan.',
-  'Manufactured with premium lead alloys for a consistently longer service life.',
-];
-
-const proofTiles = [
-  { image: '/vk_poster.png', label: 'VK Power visual' },
-  { image: '/battery_3.jpeg', label: 'MK Gold visual' },
-  { image: '/battery_1.jpeg', label: 'Ready stock proof' },
-  { image: '/battery_label.png', label: 'Brand label detail' },
+  'Share your bike or scooter model on WhatsApp and get the right battery without guesswork.',
+  'See real stock and confirm availability before you visit or place the order.',
+  'Get clear warranty details and pricing in one short conversation.',
 ];
 
 const reviewCards = [
@@ -137,7 +147,7 @@ const reviewCards = [
     role: 'Daily commuter',
     quote:
       'Fast reply on WhatsApp and the battery performance has been solid from day one.',
-    image: '/vk_poster.png',
+    image: '/vk_poster.webp',
   },
   {
     name: 'Pooja Mehta',
@@ -166,125 +176,224 @@ const slidingReviews = [...reviewCards, ...reviewCards];
 
 function App() {
   const currentYear = new Date().getFullYear();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="site-shell">
-      <header className="topbar">
-        <div className="container header-row">
-          <a href="#top" className="logo-group">
-            <div className="logo-stack" aria-hidden="true">
-              <span className="logo-chip logo-chip-vk">VK</span>
-              <span className="logo-chip logo-chip-mk">MK</span>
-            </div>
-            <div>
-              <div className="logo-title">Two Wheeler Battery Hub</div>
-              <div className="logo-subtitle">VK Power and MK Gold seller</div>
-            </div>
-          </a>
-
-          <nav className="nav-links" aria-label="Primary">
-            <a href="#brands">Brands</a>
-            <a href="#stock">Stock</a>
-            <a href="#reviews">Reviews</a>
-            <a href="#contact">Contact</a>
-          </nav>
-
-          <div className="header-actions">
-            <a href={`tel:${phoneNumber}`} className="btn btn-ghost">
-              <Phone size={18} />
-              Call Now
-            </a>
-            <a
-              href={createWhatsAppLink(
-                'Hi, I want details for your two wheeler battery options.',
-              )}
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-primary"
-              onClick={() => trackClick('Header CTA')}
-            >
-              <MessageCircle size={18} />
-              WhatsApp
-            </a>
-          </div>
-        </div>
-      </header>
-
       <main id="top">
         <section className="hero-section">
-          <div className="container hero-grid">
-            <motion.div className="hero-copy" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
-              <p className="eyebrow">Premium Two Wheeler Batteries</p>
-              <h1>
-                Power every ride with{' '}
-                <span className="highlight-red">VK Power</span> and{' '}
-                <span className="highlight-gold">MK Gold</span>.
-              </h1>
-              <p className="hero-lead">
-                Upgrade your bike or scooter with India's most reliable, maintenance-free batteries. Built for extreme weather, quick starts, and unmatched longevity.
-              </p>
-
-              <div className="hero-brand-row">
-                {brandCards.map((brand) => (
-                  <div key={brand.name} className={`brand-pill ${brand.theme}`}>
-                    <span className="brand-pill-name">{brand.name}</span>
-                    <span className="brand-pill-copy">{brand.warranty}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="hero-actions">
-                <a href="#brands" className="btn btn-primary">
-                  Explore Brands
-                  <ChevronRight size={18} />
-                </a>
-                <a href="#reviews" className="btn btn-secondary">
-                  See Reviews
-                </a>
-              </div>
-
-              <div className="stat-strip">
-                {quickStats.map((stat) => (
-                  <div key={stat.label} className="stat-card">
-                    <strong>{stat.value}</strong>
-                    <span>{stat.label}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-            <motion.div className="hero-visual" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2 }}>
-              <div className="hero-stage">
-                <div className="stage-backdrop" aria-hidden="true">
-                  <div className="stage-ring stage-ring-red" />
-                  <div className="stage-ring stage-ring-gold" />
-                  <div className="stage-floor" />
-                </div>
-
-               
-
-                <div className="model-shell" style={{ height: '500px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <BatteryModel />
-                </div>
-
-               
-              </div>
-
-              <div className="hero-proof-row">
-                {brandCards.map((brand) => (
-                  <article
-                    key={brand.name}
-                    className={`hero-proof-card ${brand.theme}`}
+          <div className="container">
+            <div className="hero-shell">
+              <header className="topbar">
+                <div className="header-row">
+                  <button
+                    type="button"
+                    className="mobile-menu-button"
+                    aria-label="Open navigation menu"
+                    aria-expanded={isMobileMenuOpen}
+                    onClick={() => setIsMobileMenuOpen((open) => !open)}
                   >
-                    <img src={brand.image} alt={`${brand.name} product poster`} />
-                    <div>
-                      <strong>{brand.name}</strong>
-                      <span>{brand.warranty}</span>
+                    <Menu size={30} />
+                  </button>
+
+                  <a href="#top" className="logo-group">
+                    <div className="logo-mark" aria-hidden="true">
+                      <div className="logo-stack">
+                        <span className="logo-chip logo-chip-vk">VK</span>
+                        <span className="logo-chip logo-chip-mk">MK</span>
+                      </div>
                     </div>
-                  </article>
-                ))}
+
+                    <div className="logo-copy">
+                      <div className="brand-wordmark">
+                        <span className="brand-wordmark-vk">VK</span>
+                        <span className="brand-wordmark-&">&</span>
+                        <span className="brand-wordmark-mk">MK Gold</span>
+                      </div>
+                      <div className="logo-subtitle">Two Wheeler Batteries</div>
+                    </div>
+                  </a>
+
+                  <nav className="nav-menu" aria-label="Primary">
+                    {navItems.map((item) => (
+                      <a
+                        key={item.label}
+                        href={item.href}
+                        className={`nav-item${item.current ? ' nav-item-current' : ''}`}
+                      >
+                        <span>{item.label}</span>
+                        {item.hasCaret ? <ChevronDown size={16} /> : null}
+                      </a>
+                    ))}
+                  </nav>
+
+                  <a
+                    href={createWhatsAppLink(
+                      'Hi, I want details for your two wheeler battery options.',
+                    )}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-primary header-cta"
+                    onClick={() => trackClick('Header WhatsApp CTA')}
+                  >
+                    <MessageCircle size={18} />
+                    Chat on WhatsApp
+                  </a>
+                </div>
+
+                <div className={`mobile-nav-panel${isMobileMenuOpen ? ' is-open' : ''}`}>
+                  {navItems.map((item) => (
+                    <a
+                      key={`mobile-${item.label}`}
+                      href={item.href}
+                      className="mobile-nav-link"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
+              </header>
+
+              <div className="hero-panel">
+                <div className="hero-panel-overlay" aria-hidden="true" />
+
+                <div className="mobile-hero-layout">
+                  <motion.div
+                    className="mobile-hero-copy"
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7 }}
+                  >
+                    <h1>
+                      <span>Power For</span>
+                      <span className="headline-emphasis">Every Ride</span>
+                    </h1>
+
+                    <div className="hero-divider mobile-hero-divider" aria-hidden="true">
+                      <span />
+                      <span />
+                    </div>
+
+                    <p className="mobile-hero-lead">
+                      Reliable. Durable. High performance. Premium two-wheeler
+                      batteries from <strong>MK Gold</strong> and{' '}
+                      <strong>VK Power</strong>.
+                    </p>
+
+                    <div className="mobile-hero-actions">
+                      <a href="#brands" className="btn btn-primary">
+                        Explore Batteries
+                        <ArrowRight size={18} />
+                      </a>
+                      <a
+                        href={createWhatsAppLink(
+                          'Hi, I want the right two-wheeler battery. Please share stock, price, and warranty details.',
+                        )}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn btn-outline"
+                        onClick={() => trackClick('Mobile Hero WhatsApp CTA')}
+                      >
+                        <MessageCircle size={18} />
+                        Chat on WhatsApp
+                      </a>
+                    </div>
+                  </motion.div>
+
+                  <div className="mobile-feature-panel">
+                    {heroFeatures.map((feature) => {
+                      const Icon = feature.icon;
+
+                      return (
+                        <article key={`mobile-${feature.title}`} className="mobile-feature-card">
+                          <div className="mobile-feature-icon">
+                            <Icon size={22} />
+                          </div>
+                          <div className="mobile-feature-copy">
+                            <strong>{feature.title}</strong>
+                            <span>{feature.detail}</span>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="hero-grid">
+                  <motion.div
+                    className="hero-copy"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8 }}
+                  >
+                    <p className="eyebrow">Premium Two Wheeler Batteries</p>
+                    <h1>
+                      <span>Power For</span>
+                      <span className="headline-emphasis">Every Ride</span>
+                    </h1>
+
+                    <div className="hero-divider" aria-hidden="true">
+                      <span />
+                      <span />
+                    </div>
+
+                    <p className="hero-lead">
+                      Reliable. Durable. High performance. Premium two-wheeler
+                      batteries from <strong>MK Gold</strong> and{' '}
+                      <strong>VK Power</strong>.
+                    </p>
+
+                    <div className="hero-actions">
+                      <a href="#brands" className="btn btn-primary">
+                        Explore Batteries
+                        <ArrowRight size={18} />
+                      </a>
+                      <a
+                        href={createWhatsAppLink(
+                          'Hi, I want the right two-wheeler battery. Please share stock, price, and warranty details.',
+                        )}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn btn-outline"
+                        onClick={() => trackClick('Hero WhatsApp CTA')}
+                      >
+                        <MessageCircle size={18} />
+                        Chat on WhatsApp
+                      </a>
+                    </div>
+
+                    <div className="hero-feature-grid">
+                      {heroFeatures.map((feature) => {
+                        const Icon = feature.icon;
+
+                        return (
+                          <article key={feature.title} className="hero-feature-card">
+                            <div className="hero-feature-icon">
+                              <Icon size={22} />
+                            </div>
+                            <div className="hero-feature-copy">
+                              <strong>{feature.title}</strong>
+                              <span>{feature.detail}</span>
+                            </div>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    className="hero-visual"
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.9, delay: 0.15 }}
+                  >
+                  
+                  </motion.div>
+                </div>
+
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
@@ -292,19 +401,33 @@ function App() {
           <div className="container">
             <motion.div className="section-heading" {...fadeInProps}>
               <p className="section-tag">Our Premium Selection</p>
-              <h2>
-                Choose the perfect power source for your daily commute.
-              </h2>
+              <h2>Two reliable battery options, explained clearly.</h2>
               <p className="section-lead">
-                We exclusively stock VK Power and MK Gold because they deliver the lowest failure rate, highest cranking power, and best warranty support in the industry.
+                We keep the choice simple: one solid everyday option and one
+                longer-warranty upgrade for riders who want more value.
               </p>
             </motion.div>
 
-            <motion.div className="brand-grid" variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            <motion.div
+              className="brand-grid"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: '-50px' }}
+            >
               {brandCards.map((brand) => (
-                <motion.article variants={itemProps} key={brand.name} className={`brand-card ${brand.theme}`}>
+                <motion.article
+                  variants={itemProps}
+                  key={brand.name}
+                  className={`brand-card ${brand.theme}`}
+                >
                   <div className="brand-media">
-                    <img src={brand.image} alt={`${brand.name} battery`} />
+                    <img
+                      src={brand.image}
+                      alt={`${brand.name} battery`}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     <span className="warranty-badge">{brand.warranty}</span>
                   </div>
 
@@ -339,26 +462,30 @@ function App() {
           </div>
         </section>
 
-        <section className="section story-section" id="stock">
+        <section className="section story-section" id="why-us">
           <div className="container story-grid">
             <div className="story-photo-card">
               <img
                 src="/battery_1.jpeg"
                 alt="Ready stock of two wheeler batteries"
+                loading="lazy"
+                decoding="async"
               />
               <div className="story-photo-overlay">
                 <p className="section-tag section-tag-dark">Ready stock</p>
-                <h3>Actual inventory visuals build trust faster than generic filler.</h3>
+                <h3>
+                  Actual inventory visuals build trust faster than generic
+                  filler.
+                </h3>
               </div>
             </div>
 
             <motion.div className="story-content" {...fadeInProps}>
-              <p className="section-tag">Why Choose Us</p>
-              <h2>
-                100% Genuine batteries, ready in stock, and delivered with trust.
-              </h2>
+              <p className="section-tag">Why Riders Choose Us</p>
+              <h2>Fresh stock, clear warranty, and quick answers before you buy.</h2>
               <p className="section-lead">
-                Don't get stranded with a dead battery. We ensure you get fresh, fully-charged, and authentic batteries that are optimized for local city traffic and extreme weather conditions.
+                The goal is simple: help riders choose the right battery
+                without confusion, delays, or sales pressure.
               </p>
 
               <div className="benefit-grid">
@@ -387,15 +514,6 @@ function App() {
                   </li>
                 ))}
               </ul>
-
-              <div className="proof-grid">
-                {proofTiles.map((tile) => (
-                  <div key={tile.label} className="proof-tile">
-                    <img src={tile.image} alt={tile.label} />
-                    <span>{tile.label}</span>
-                  </div>
-                ))}
-              </div>
             </motion.div>
           </div>
         </section>
@@ -404,23 +522,23 @@ function App() {
           <div className="container">
             <motion.div className="section-heading section-heading-light" {...fadeInProps}>
               <p className="section-tag">Customer ratings</p>
-              <h2>Trusted by thousands of daily riders across the city.</h2>
+              <h2>Reviews from riders who wanted fast, clear support.</h2>
               <p className="section-lead">
-                Don't just take our word for it. See why delivery agents, commuters, and weekend riders rely on our battery recommendations.
+                Real buying decisions usually happen after a quick conversation.
+                These reviews reinforce that promise.
               </p>
             </motion.div>
 
             <div className="review-marquee">
               <div className="review-track">
                 {slidingReviews.map((review, index) => (
-                  <article
-                    key={`${review.name}-${index}`}
-                    className="review-card"
-                  >
+                  <article key={`${review.name}-${index}`} className="review-card">
                     <img
                       className="review-image"
                       src={review.image}
                       alt={`${review.name} review visual`}
+                      loading="lazy"
+                      decoding="async"
                     />
 
                     <div className="review-body">
@@ -454,15 +572,16 @@ function App() {
             <div className="contact-card">
               <motion.div className="contact-copy" {...fadeInProps}>
                 <p className="section-tag">Ready to upgrade?</p>
-                <h2>Get a fresh battery today. Connect instantly on WhatsApp.</h2>
+                <h2>Send your model on WhatsApp and get the right battery fast.</h2>
                 <p className="section-lead">
-                  Skip the hassle. Tell us your bike or scooter model, and we'll instantly give you the best price for a brand new VK Power or MK Gold battery.
+                  No long form needed. Just send your bike or scooter details and
+                  get price, stock, and warranty help in one reply.
                 </p>
 
                 <div className="contact-actions">
                   <a
                     href={createWhatsAppLink(
-                      'Hi, I am interested in purchasing a new two-wheeler battery (VK Power / MK Gold). Could you share the latest pricing?',
+                      'Hi, I want to buy a new two-wheeler battery. I will share my vehicle model. Please send the right option, price, and warranty details.',
                     )}
                     target="_blank"
                     rel="noreferrer"
@@ -470,7 +589,7 @@ function App() {
                     onClick={() => trackClick('Footer CTA')}
                   >
                     <MessageCircle size={18} />
-                    Chat on WhatsApp
+                    Send Model on WhatsApp
                   </a>
                   <a href={`tel:${phoneNumber}`} className="btn btn-outline-light">
                     <Phone size={18} />
@@ -486,12 +605,12 @@ function App() {
                 </div>
                 <div className="contact-detail">
                   <MapPin size={18} />
-                  <span>Delhi, India</span>
+                  <span>Indore, India</span>
                 </div>
 
                 <div className="contact-panels">
                   <article className="contact-panel">
-                    <BatteryFull size={20} />
+                    <Store size={20} />
                     <div>
                       <strong>VK Power</strong>
                       <span>Daily-use sealed AGM support</span>
@@ -514,15 +633,16 @@ function App() {
       <footer className="site-footer">
         <div className="container footer-row">
           <div>
-            <div className="footer-brand">Two Wheeler Battery Hub</div>
+            <div className="footer-brand">VK Power & MK Gold</div>
             <p>
-              Focused on VK Power and MK Gold batteries for bikes and scooters.
+              WhatsApp-first support for VK Power and MK Gold bike and scooter
+              batteries.
             </p>
           </div>
 
           <div className="footer-links">
-            <a href="#brands">Brands</a>
-            <a href="#stock">Stock</a>
+            <a href="#brands">Batteries</a>
+            <a href="#why-us">Why Us</a>
             <a href="#reviews">Reviews</a>
             <a href="#contact">Contact</a>
           </div>
