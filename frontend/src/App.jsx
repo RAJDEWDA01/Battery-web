@@ -20,6 +20,12 @@ import {
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import './index.css';
+import {
+  createApiUrl,
+  createPhoneLink,
+  createWhatsAppLink,
+  siteConfig,
+} from './siteConfig';
 
 const fadeInProps = {
   initial: { opacity: 0, y: 30 },
@@ -41,15 +47,9 @@ const itemProps = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const phoneNumber = '9100000000';
-const displayPhone = '+91 00000 00000';
-
-const createWhatsAppLink = (message) =>
-  `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
 const trackClick = async (productName) => {
   try {
-    await fetch('/api/track-click', {
+    await fetch(createApiUrl('/api/track-click'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -143,29 +143,29 @@ const supportPoints = [
 
 const reviewCards = [
   {
-    name: 'Rohit Sharma',
-    role: 'Daily commuter',
+    name: 'Verified commuter',
+    role: 'Daily rider',
     quote:
       'Fast reply on WhatsApp and the battery performance has been solid from day one.',
     image: '/vk_poster.webp',
   },
   {
-    name: 'Pooja Mehta',
-    role: 'Scooter owner',
+    name: 'Verified scooter owner',
+    role: 'Scooter rider',
     quote:
       'Maintenance free battery, clear warranty explanation, and the buying process felt easy.',
     image: '/battery_3.jpeg',
   },
   {
-    name: 'Aman Verma',
-    role: 'Delivery rider',
+    name: 'Verified delivery rider',
+    role: 'High-usage rider',
     quote:
       'Needed a quick replacement and they had ready stock available when I asked.',
     image: '/battery_1.jpeg',
   },
   {
-    name: 'Neha Singh',
-    role: 'City rider',
+    name: 'Verified city rider',
+    role: 'Urban commuter',
     quote:
       'Bike starts instantly now and I liked that they suggested the right option without confusion.',
     image: '/battery_label.png',
@@ -177,6 +177,13 @@ const slidingReviews = [...reviewCards, ...reviewCards];
 function App() {
   const currentYear = new Date().getFullYear();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const callLink = createPhoneLink();
+  const whatsAppLinkProps = siteConfig.whatsappNumber
+    ? {
+        target: '_blank',
+        rel: 'noreferrer',
+      }
+    : {};
 
   return (
     <div className="site-shell">
@@ -231,8 +238,7 @@ function App() {
                     href={createWhatsAppLink(
                       'Hi, I want details for your two wheeler battery options.',
                     )}
-                    target="_blank"
-                    rel="noreferrer"
+                    {...whatsAppLinkProps}
                     className="btn btn-primary header-cta"
                     onClick={() => trackClick('Header WhatsApp CTA')}
                   >
@@ -290,8 +296,7 @@ function App() {
                         href={createWhatsAppLink(
                           'Hi, I want the right two-wheeler battery. Please share stock, price, and warranty details.',
                         )}
-                        target="_blank"
-                        rel="noreferrer"
+                        {...whatsAppLinkProps}
                         className="btn btn-outline"
                         onClick={() => trackClick('Mobile Hero WhatsApp CTA')}
                       >
@@ -353,8 +358,7 @@ function App() {
                         href={createWhatsAppLink(
                           'Hi, I want the right two-wheeler battery. Please share stock, price, and warranty details.',
                         )}
-                        target="_blank"
-                        rel="noreferrer"
+                        {...whatsAppLinkProps}
                         className="btn btn-outline"
                         onClick={() => trackClick('Hero WhatsApp CTA')}
                       >
@@ -447,8 +451,7 @@ function App() {
 
                     <a
                       href={createWhatsAppLink(brand.ctaMessage)}
-                      target="_blank"
-                      rel="noreferrer"
+                      {...whatsAppLinkProps}
                       className="btn btn-card"
                       onClick={() => trackClick(brand.name)}
                     >
@@ -583,15 +586,14 @@ function App() {
                     href={createWhatsAppLink(
                       'Hi, I want to buy a new two-wheeler battery. I will share my vehicle model. Please send the right option, price, and warranty details.',
                     )}
-                    target="_blank"
-                    rel="noreferrer"
+                    {...whatsAppLinkProps}
                     className="btn btn-white"
                     onClick={() => trackClick('Footer CTA')}
                   >
                     <MessageCircle size={18} />
                     Send Model on WhatsApp
                   </a>
-                  <a href={`tel:${phoneNumber}`} className="btn btn-outline-light">
+                  <a href={callLink} className="btn btn-outline-light">
                     <Phone size={18} />
                     Call Now
                   </a>
@@ -601,11 +603,11 @@ function App() {
               <div className="contact-side">
                 <div className="contact-detail">
                   <Phone size={18} />
-                  <span>{displayPhone}</span>
+                  <span>{siteConfig.displayPhone}</span>
                 </div>
                 <div className="contact-detail">
                   <MapPin size={18} />
-                  <span>Indore, India</span>
+                  <span>{siteConfig.businessLocation}</span>
                 </div>
 
                 <div className="contact-panels">
@@ -633,7 +635,7 @@ function App() {
       <footer className="site-footer">
         <div className="container footer-row">
           <div>
-            <div className="footer-brand">VK Power & MK Gold</div>
+            <div className="footer-brand">{siteConfig.businessName}</div>
             <p>
               WhatsApp-first support for VK Power and MK Gold bike and scooter
               batteries.
@@ -648,7 +650,7 @@ function App() {
           </div>
 
           <div className="footer-meta">
-            <span>{displayPhone}</span>
+            <span>{siteConfig.displayPhone}</span>
             <span>© {currentYear}</span>
           </div>
         </div>
